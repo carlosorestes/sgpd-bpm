@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,11 +19,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
 public class VehicleGateway {
 	
-	 @Autowired
-	 private RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
+
+	public VehicleGateway(RestTemplateBuilder restTemplateBuilder) {
+		this.restTemplate = restTemplateBuilder.build();
+	}
 	 
-	 public Map<String, String> getVehicleByRenavam(String renavam) throws IOException {
-		 String url = String.format("http://localhost:8080/vehicle/%s",renavam);
+	 public Map<String, String> getVehicleByRenavam(String renavam, Long orderId) throws IOException {
+		 String url = String.format("http://localhost:8080/vehicle/renavam/%s/order/%x",renavam, orderId);
 			Map<String, String> responseMap = new HashMap<String, String>();
 			
 			 // create headers
