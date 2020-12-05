@@ -8,6 +8,8 @@ spring:
     console:
       enabled: true
       path: /h2-console
+  main:
+    allow-bean-definition-overriding: true
       
 camunda.bpm.admin-user:
   id: demo

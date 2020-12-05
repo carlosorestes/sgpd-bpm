@@ -3,7 +3,9 @@ package com.sgpd.br.bpm.delegate;
 import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ReceivedRequestDelegate implements JavaDelegate {
 
 	@Override

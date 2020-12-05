@@ -6,15 +6,15 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sgpd.br.bpm.gateway.VehicleGateway;
+import com.sgpd.br.bpm.gateway.VehicleServiceImpl;
 
 @Service
 public class VehicleService {
 	
 	@Autowired
-	private VehicleGateway vehicleGateway;
+	private VehicleService vehicleService;
 	
 	public Map<String, String> getVehicleByRenavam(String renavam, Long orderId) throws IOException{
-		return vehicleGateway.getVehicleByRenavam(renavam, orderId);
+		return vehicleService.getVehicleByRenavam(renavam, orderId);
 	}
 }

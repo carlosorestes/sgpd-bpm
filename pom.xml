@@ -20,6 +20,12 @@
   <version>1.0.0-SNAPSHOT</version>
 
   <dependencies>
+  	<dependency>
+	  <groupId>org.camunda.bpm.springboot</groupId>
+	  <artifactId>camunda-bpm-spring-boot-starter</artifactId>
+	  <version>7.13.0</version>
+	</dependency>
+  
     <dependency>
       <groupId>org.camunda.bpm.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
@@ -31,6 +37,12 @@
       <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
       <version>7.14.0</version>
     </dependency>
+    
+    <dependency>
+	  <groupId>org.camunda.bpm</groupId>
+	  <artifactId>camunda-engine-spring</artifactId>
+	   <version>7.14.0</version>
+	</dependency>
 
     <dependency>
       <groupId>com.h2database</groupId>
