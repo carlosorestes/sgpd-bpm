@@ -11,6 +11,10 @@ spring:
   main:
     allow-bean-definition-overriding: true
       
-camunda.bpm.admin-user:
-  id: demo
-  password: demo
+camunda.bpm:
+  admin-user:
+    id: camunda
+    password: camunda
+    firstName: Kermit
+  filter:
+    create: All tasks

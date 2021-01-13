@@ -1,67 +1,157 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0ef07qr" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.3.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0ef07qr" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.3.0">
   <bpmn:process id="consult_traffic_ticket" name="consultTrafficTicket" isExecutable="true">
     <bpmn:startEvent id="startEvent" name="Start Event">
       <bpmn:outgoing>Flow_069n9ia</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_069n9ia" sourceRef="startEvent" targetRef="srvTaskReceivedRequest" />
     <bpmn:sequenceFlow id="Flow_1eok7m3" sourceRef="srvTaskRecoverVehicleData" targetRef="srvTaskGetDataVehicleAPI" />
-    <bpmn:endEvent id="EndEventSemRestricao" name="End Event Sem Restricao">
-      <bpmn:incoming>Flow_1yyt0td</bpmn:incoming>
+    <bpmn:endEvent id="EndEventVehicleNotExists" name="Veiculo Não Encontrado&#10;">
+      <bpmn:incoming>Flow_0x555se</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:serviceTask id="srvTaskRecoverVehicleData" name="Recupera dados do Veiculo" camunda:class="com.sgpd.br.bpm.delegate.RecoverVehicleDataDelegate">
       <bpmn:incoming>Flow_1edq52k</bpmn:incoming>
       <bpmn:outgoing>Flow_1eok7m3</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_1yyt0td" sourceRef="srvTaskGetDataVehicleAPI" targetRef="EndEventSemRestricao" />
     <bpmn:serviceTask id="srvTaskGetDataVehicleAPI" name="Busca Dados DENATRAN" camunda:class="com.sgpd.br.bpm.delegate.GetDataVehicleAPIDelegate">
       <bpmn:incoming>Flow_1eok7m3</bpmn:incoming>
-      <bpmn:outgoing>Flow_1yyt0td</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1siroky</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1edq52k" sourceRef="srvTaskReceivedRequest" targetRef="srvTaskRecoverVehicleData" />
     <bpmn:serviceTask id="srvTaskReceivedRequest" name="Recebe Soliitação SGPD" camunda:class="com.sgpd.br.bpm.delegate.ReceivedRequestDelegate">
       <bpmn:incoming>Flow_069n9ia</bpmn:incoming>
       <bpmn:outgoing>Flow_1edq52k</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_0kb4wyv" name="Veículo Encontrado ?">
+      <bpmn:incoming>Flow_1siroky</bpmn:incoming>
+      <bpmn:outgoing>Flow_0t423z6</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1q3o27k</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0x555se" sourceRef="srvTaskUpdateStatusVehicleNotExists" targetRef="EndEventVehicleNotExists" />
+    <bpmn:sequenceFlow id="Flow_0l87e0j" sourceRef="srvTaskCheckRestrictionVehicle" targetRef="srvTaskUpdateStatusVehicleRestriction" />
+    <bpmn:endEvent id="EndEventVehicleExists" name="Veiculo Encontrado">
+      <bpmn:incoming>Flow_1yrgxuk</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1yrgxuk" sourceRef="srvTaskUpdateStatusVehicleRestriction" targetRef="EndEventVehicleExists" />
+    <bpmn:serviceTask id="srvTaskCheckRestrictionVehicle" name="Verifica&#10;Restrições" camunda:class="com.sgpd.br.bpm.delegate.CheckRestrictionVehicleDelegate">
+      <bpmn:incoming>Flow_1w6sp5u</bpmn:incoming>
+      <bpmn:outgoing>Flow_0l87e0j</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="srvTaskUpdateStatusVehicleNotExists" name="Atualiza Status Veículo" camunda:class="com.sgpd.br.bpm.delegate.UpdateStatusVehicleDelegate">
+      <bpmn:incoming>Flow_1q3o27k</bpmn:incoming>
+      <bpmn:outgoing>Flow_0x555se</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="srvTaskUpdateStatusVehicleRestriction" name="Atualiza Status&#10;Veículo" camunda:class="com.sgpd.br.bpm.delegate.UpdateStatusVehicleDelegate">
+      <bpmn:incoming>Flow_0l87e0j</bpmn:incoming>
+      <bpmn:outgoing>Flow_1yrgxuk</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1ocs69f" name="Registra &#10;Log Denatran" camunda:class="com.sgpd.br.bpm.delegate.RegisterLogDataDelegate">
+      <bpmn:incoming>Flow_0t423z6</bpmn:incoming>
+      <bpmn:outgoing>Flow_1w6sp5u</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1w6sp5u" sourceRef="Activity_1ocs69f" targetRef="srvTaskCheckRestrictionVehicle" />
+    <bpmn:sequenceFlow id="Flow_1siroky" sourceRef="srvTaskGetDataVehicleAPI" targetRef="Gateway_0kb4wyv" />
+    <bpmn:sequenceFlow id="Flow_0t423z6" name="Sim" sourceRef="Gateway_0kb4wyv" targetRef="Activity_1ocs69f">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{vehicleHasFound}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1q3o27k" name="Não" sourceRef="Gateway_0kb4wyv" targetRef="srvTaskUpdateStatusVehicleNotExists">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{not vehicleHasFound}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="consult_traffic_ticket">
-      <bpmndi:BPMNEdge id="Flow_1eok7m3_di" bpmnElement="Flow_1eok7m3">
-        <di:waypoint x="520" y="117" />
-        <di:waypoint x="600" y="117" />
+      <bpmndi:BPMNEdge id="Flow_1q3o27k_di" bpmnElement="Flow_1q3o27k">
+        <di:waypoint x="810" y="292" />
+        <di:waypoint x="810" y="390" />
+        <di:waypoint x="840" y="390" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="815" y="338" width="21" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_069n9ia_di" bpmnElement="Flow_069n9ia">
-        <di:waypoint x="198" y="117" />
-        <di:waypoint x="240" y="117" />
+      <bpmndi:BPMNEdge id="Flow_0t423z6_di" bpmnElement="Flow_0t423z6">
+        <di:waypoint x="810" y="242" />
+        <di:waypoint x="810" y="120" />
+        <di:waypoint x="840" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="816" y="178" width="19" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1yyt0td_di" bpmnElement="Flow_1yyt0td">
-        <di:waypoint x="700" y="117" />
-        <di:waypoint x="802" y="117" />
+      <bpmndi:BPMNEdge id="Flow_1siroky_di" bpmnElement="Flow_1siroky">
+        <di:waypoint x="700" y="267" />
+        <di:waypoint x="785" y="267" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1w6sp5u_di" bpmnElement="Flow_1w6sp5u">
+        <di:waypoint x="940" y="120" />
+        <di:waypoint x="1010" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yrgxuk_di" bpmnElement="Flow_1yrgxuk">
+        <di:waypoint x="1270" y="120" />
+        <di:waypoint x="1312" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0l87e0j_di" bpmnElement="Flow_0l87e0j">
+        <di:waypoint x="1110" y="120" />
+        <di:waypoint x="1170" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0x555se_di" bpmnElement="Flow_0x555se">
+        <di:waypoint x="940" y="390" />
+        <di:waypoint x="1042" y="390" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1edq52k_di" bpmnElement="Flow_1edq52k">
-        <di:waypoint x="340" y="117" />
-        <di:waypoint x="420" y="117" />
+        <di:waypoint x="340" y="267" />
+        <di:waypoint x="420" y="267" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1eok7m3_di" bpmnElement="Flow_1eok7m3">
+        <di:waypoint x="520" y="267" />
+        <di:waypoint x="600" y="267" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_069n9ia_di" bpmnElement="Flow_069n9ia">
+        <di:waypoint x="198" y="267" />
+        <di:waypoint x="240" y="267" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="startEvent">
-        <dc:Bounds x="162" y="99" width="36" height="36" />
+        <dc:Bounds x="162" y="249" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="154" y="142" width="55" height="14" />
+          <dc:Bounds x="154" y="292" width="55" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1u7husc_di" bpmnElement="EndEventSemRestricao">
-        <dc:Bounds x="802" y="99" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_1u7husc_di" bpmnElement="EndEventVehicleNotExists">
+        <dc:Bounds x="1042" y="372" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="783" y="142" width="77" height="27" />
+          <dc:Bounds x="1090" y="370" width="59" height="40" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1lockij_di" bpmnElement="srvTaskReceivedRequest">
-        <dc:Bounds x="240" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1f9yd82_di" bpmnElement="srvTaskRecoverVehicleData">
-        <dc:Bounds x="420" y="77" width="100" height="80" />
+        <dc:Bounds x="420" y="227" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0750rix_di" bpmnElement="srvTaskGetDataVehicleAPI">
-        <dc:Bounds x="600" y="77" width="100" height="80" />
+        <dc:Bounds x="600" y="227" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1lockij_di" bpmnElement="srvTaskReceivedRequest">
+        <dc:Bounds x="240" y="227" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0kb4wyv_di" bpmnElement="Gateway_0kb4wyv" isMarkerVisible="true">
+        <dc:Bounds x="785" y="242" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="845" y="254" width="66" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_06n3f33_di" bpmnElement="EndEventVehicleExists">
+        <dc:Bounds x="1312" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1305" y="145" width="57" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0qmjga6_di" bpmnElement="srvTaskCheckRestrictionVehicle">
+        <dc:Bounds x="1010" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_12bhsax_di" bpmnElement="srvTaskUpdateStatusVehicleNotExists">
+        <dc:Bounds x="840" y="350" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0c2dd8g_di" bpmnElement="srvTaskUpdateStatusVehicleRestriction">
+        <dc:Bounds x="1170" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1fwvmso_di" bpmnElement="Activity_1ocs69f">
+        <dc:Bounds x="840" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
