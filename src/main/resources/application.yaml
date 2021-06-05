@@ -10,11 +10,13 @@ spring:
       path: /h2-console
   main:
     allow-bean-definition-overriding: true
+  activemq:
+    broker-url: tcp://localhost:61616
       
 camunda.bpm:
   admin-user:
-    id: camunda
-    password: camunda
-    firstName: Kermit
+    id: demo
+    password: demo
+    firstName: Demo
   filter:
     create: All tasks

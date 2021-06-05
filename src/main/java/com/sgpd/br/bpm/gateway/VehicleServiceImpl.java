@@ -37,7 +37,7 @@ public class VehicleServiceImpl implements VehicleService {
 		HttpHeaders headers = new HttpHeaders();
 		// set `accept` header
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.set("Authorization", "Basic amF2YWludXNlOnBhc3N3b3Jk");
+		headers.set("Authorization", "Basic YWRtaW46YWRtaW4=");
 
 		// build the request
 		HttpEntity request = new HttpEntity(headers);
@@ -76,7 +76,7 @@ public class VehicleServiceImpl implements VehicleService {
 	public HttpEntity getPostRequestHeaders(String jsonPostBody) {
         HttpHeaders reqHeaders = new HttpHeaders();
         reqHeaders.setContentType(MediaType.APPLICATION_JSON);
-        reqHeaders.set("Authorization", "Basic amF2YWludXNlOnBhc3N3b3Jk");
+        reqHeaders.set("Authorization", "Basic YWRtaW46YWRtaW4");
         return new HttpEntity(jsonPostBody, reqHeaders);
     }
 
